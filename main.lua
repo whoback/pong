@@ -2,7 +2,10 @@ WIN_HEIGHT = 720
 WIN_WIDTH = 1280
 V_HEIGHT = 243
 V_WIDTH = 432
-
+R = 40/255
+G = 45/255
+B = 52/255
+A = 255/255
 push = require 'push'
 
 
@@ -23,12 +26,17 @@ function love.keypressed(key)
 end
 
 function love.draw()
+    -- use virtual resolution
     push:apply('start')
+    -- change bg color using RGBA colors
+    love.graphics.clear(R, G, B, A)
+    -- draw rect for pong ball
+    love.graphics.rectangle('fill', V_WIDTH/2, V_HEIGHT/2, 5, 5)
     love.graphics.printf(
         "Hello Pong", 
         0, 
-        V_HEIGHT / 2, 
-        V_HEIGHT, 
+        20, 
+        V_WIDTH, 
         'center')
     push:apply('end')
 end
