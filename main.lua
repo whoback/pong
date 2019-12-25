@@ -1,3 +1,10 @@
+push = require 'push'
+Class = require 'class'
+require 'Paddle'
+require 'Ball'
+
+
+
 WIN_HEIGHT = 720
 WIN_WIDTH = 1280
 V_HEIGHT = 243
@@ -8,27 +15,27 @@ G = 45/255
 B = 52/255
 A = 255/255
 
-push = require 'push'
-Class = require 'class'
-require 'Ball'
-require 'Paddle'
+
 
 function love.load()
-    rseed = math.random()
-    math.randomseed(rseed)
+    -- rseed = math.random()
+    math.randomseed(os.time())
     love.graphics.setDefaultFilter('nearest', 'nearest')
     push:setupScreen(V_WIDTH, V_HEIGHT, WIN_WIDTH, WIN_HEIGHT, {
         fullscreen = false,
         vsync = true,
         resizable = false
     }) 
+
+    paddle_1 = Paddle(5, 20, 5, 20)
+    paddle_2 = Paddle(V_WIDTH - 10,  V_HEIGHT - 30, 5, 20)
+
     game_state = 'start'
 
     player_1_score = 0
     player_2_score = 0
     
-    paddle_1 = Paddle(5, 20, 5, 20)
-    paddle_2 = Paddle(V_WIDTH - 10,  V_HEIGHT - 30, 5, 20)
+    
     
     ball_x = V_WIDTH / 2 - 2
     ball_y = V_HEIGHT / 2 - 2
@@ -96,7 +103,7 @@ function love.draw()
 
     -- draw paddles on both sides
     paddle_1:render() --left paddle
-    paddle_2:render() --right paddle
+    -- paddle_2:render() --right paddle
     
     love.graphics.print(player_1_score, V_WIDTH/2 - 50, V_HEIGHT / 3)
     love.graphics.print(player_2_score, V_WIDTH/2 + 50, V_HEIGHT / 3)
