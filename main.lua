@@ -11,12 +11,21 @@ push = require 'push'
 
 
 function love.load()
+    rseed = math.random()
+    math.randomseed(rseed)
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    game_state = 'start'
 
     player_1_score = 0
     player_2_score = 0
     player_1_y = 30
     player_2_y = V_HEIGHT - 40
+    
+    ball_x = V_WIDTH / 2 - 2
+    ball_y = V_HEIGHT / 2 - 2
+
+    ball_dx = math.random(2) == 1 and -100 or 100
+    ball_dy = math.random(-50, 50)
     push:setupScreen(V_WIDTH, V_HEIGHT, WIN_WIDTH, WIN_HEIGHT, {
         fullscreen = false,
         vsync = true,
@@ -45,11 +54,22 @@ function love.update(dt)
         player_2_y = math.min(V_HEIGHT-20, player_2_y + PADDLE_SPEED * dt) 
     end
 
+    if game_state == 'play' then
+        ball_x = ball_x + ball_dx * dt 
+        ball_y = ball_y + ball_dy * dt
+    end
 end
 
 function love.keypressed(key)
     if key == 'escape' then
         love.event.quit()
+        -- pause and start game functionality 
+    elseif key == 'return' or key == 'enter' then
+        if game_state == 'start' then
+            game_state = 'play'
+        elseif game_state == 'play' then
+            game_state = 'start'
+        end
     end
 end
 
@@ -60,7 +80,7 @@ function love.draw()
     love.graphics.clear(R, G, B, A)
     
     -- draw rect for pong ball      
-    love.graphics.rectangle('fill', V_WIDTH/2, V_HEIGHT/2, 5, 5)
+    love.graphics.rectangle('fill', ball_x, ball_y, 4, 4)
 
     -- draw paddles on both sides
     love.graphics.rectangle('fill', 5, player_1_y, 5, 20) --left paddle
