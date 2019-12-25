@@ -21,29 +21,24 @@ function love.load()
     -- rseed = math.random()
     math.randomseed(os.time())
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    love.window.setTitle('Pong')
     push:setupScreen(V_WIDTH, V_HEIGHT, WIN_WIDTH, WIN_HEIGHT, {
         fullscreen = false,
         vsync = true,
         resizable = false
     }) 
-
-    paddle_1 = Paddle(5, 20, 5, 20)
-    paddle_2 = Paddle(V_WIDTH - 10,  V_HEIGHT - 30, 5, 20)
-
-    game_state = 'start'
-
+    player_1 = Paddle(5, 20, 5, 20)
+    player_2 = Paddle(55, 20, 5, 20)
+    
     player_1_score = 0
     player_2_score = 0
-    
-    
     
     ball_x = V_WIDTH / 2 - 2
     ball_y = V_HEIGHT / 2 - 2
 
-    ball_dx = math.random(2) == 1 and -100 or 100
-    ball_dy = math.random(-50, 50)
     
-    
+    ball = Ball(V_WIDTH / 2 - 2, V_HEIGHT/2 - 2, 4, 4)
+    game_state = 'start'
 end
 
 -- move players in relation to frame rate
@@ -53,30 +48,29 @@ end
 |              |
 0,height -- width,height
 -- ]]
-function love.update(dt)
-    paddle_1:update(dt)
-    paddle_2:update(dt)
-    
+function love.update(dt)    
     if love.keyboard.isDown('w') then
-        paddle_1.dy = -PADDLE_SPEED
+        player_1.dy = -PADDLE_SPEED
     elseif love.keyboard.isDown('s') then
-        paddle_1.dy = PADDLE_SPEED
+        player_1.dy = PADDLE_SPEED
     else
-        paddle_1.dy = 0
+        player_1.dy = 0
     end
 
     if love.keyboard.isDown('up') then
-        paddle_2 = -PADDLE_SPEED
+        player_2 = -PADDLE_SPEED
     elseif love.keyboard.isDown('down')  then
-        paddle_2 = PADDLE_SPEED
+        player_2 = PADDLE_SPEED
     else
-        paddle_2 = 0
+        player_2 = 0
     end
 
     if game_state == 'play' then
-        ball_x = ball_x + ball_dx * dt 
-        ball_y = ball_y + ball_dy * dt
+        ball:update(dt)
     end
+
+    player_1:update(dt)
+    player_2:update(dt)
 end
 
 function love.keypressed(key)
@@ -88,6 +82,7 @@ function love.keypressed(key)
             game_state = 'play'
         elseif game_state == 'play' then
             game_state = 'start'
+            ball:reset()
         end
     end
 end
@@ -98,12 +93,6 @@ function love.draw()
     -- change bg color using RGBA colors
     love.graphics.clear(R, G, B, A)
     
-    -- draw rect for pong ball      
-    love.graphics.rectangle('fill', ball_x, ball_y, 4, 4)
-
-    -- draw paddles on both sides
-    paddle_1:render() --left paddle
-    -- paddle_2:render() --right paddle
     
     love.graphics.print(player_1_score, V_WIDTH/2 - 50, V_HEIGHT / 3)
     love.graphics.print(player_2_score, V_WIDTH/2 + 50, V_HEIGHT / 3)
@@ -113,5 +102,11 @@ function love.draw()
         20, 
         V_WIDTH, 
         'center')
+    
+
+        -- draw paddles on both sides
+    player_1:render() --left paddle
+    player_2:render() --right paddle
+    ball:render()
     push:apply('end')
 end
