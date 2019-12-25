@@ -7,30 +7,35 @@ R = 40/255
 G = 45/255
 B = 52/255
 A = 255/255
-push = require 'push'
 
+push = require 'push'
+Class = require 'class'
+require 'Ball'
+require 'Paddle'
 
 function love.load()
     rseed = math.random()
     math.randomseed(rseed)
     love.graphics.setDefaultFilter('nearest', 'nearest')
+    push:setupScreen(V_WIDTH, V_HEIGHT, WIN_WIDTH, WIN_HEIGHT, {
+        fullscreen = false,
+        vsync = true,
+        resizable = false
+    }) 
     game_state = 'start'
 
     player_1_score = 0
     player_2_score = 0
-    player_1_y = 30
-    player_2_y = V_HEIGHT - 40
+    
+    paddle_1 = Paddle(5, 20, 5, 20)
+    paddle_2 = Paddle(V_WIDTH - 10,  V_HEIGHT - 30, 5, 20)
     
     ball_x = V_WIDTH / 2 - 2
     ball_y = V_HEIGHT / 2 - 2
 
     ball_dx = math.random(2) == 1 and -100 or 100
     ball_dy = math.random(-50, 50)
-    push:setupScreen(V_WIDTH, V_HEIGHT, WIN_WIDTH, WIN_HEIGHT, {
-        fullscreen = false,
-        vsync = true,
-        resizable = false
-    }) 
+    
     
 end
 
@@ -42,16 +47,23 @@ end
 0,height -- width,height
 -- ]]
 function love.update(dt)
+    paddle_1:update(dt)
+    paddle_2:update(dt)
+    
     if love.keyboard.isDown('w') then
-        player_1_y = math.max(0, player_1_y - PADDLE_SPEED * dt)
+        paddle_1.dy = -PADDLE_SPEED
     elseif love.keyboard.isDown('s') then
-        player_1_y = math.min(V_HEIGHT-20, player_1_y + PADDLE_SPEED * dt)
+        paddle_1.dy = PADDLE_SPEED
+    else
+        paddle_1.dy = 0
     end
 
     if love.keyboard.isDown('up') then
-        player_2_y = math.max(0, player_2_y - PADDLE_SPEED * dt)
+        paddle_2 = -PADDLE_SPEED
     elseif love.keyboard.isDown('down')  then
-        player_2_y = math.min(V_HEIGHT-20, player_2_y + PADDLE_SPEED * dt) 
+        paddle_2 = PADDLE_SPEED
+    else
+        paddle_2 = 0
     end
 
     if game_state == 'play' then
@@ -83,8 +95,8 @@ function love.draw()
     love.graphics.rectangle('fill', ball_x, ball_y, 4, 4)
 
     -- draw paddles on both sides
-    love.graphics.rectangle('fill', 5, player_1_y, 5, 20) --left paddle
-    love.graphics.rectangle('fill', V_WIDTH-10,player_2_y, 5, 20) --right paddle
+    paddle_1:render() --left paddle
+    paddle_2:render() --right paddle
     
     love.graphics.print(player_1_score, V_WIDTH/2 - 50, V_HEIGHT / 3)
     love.graphics.print(player_2_score, V_WIDTH/2 + 50, V_HEIGHT / 3)
