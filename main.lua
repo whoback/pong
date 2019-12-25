@@ -11,6 +11,10 @@ push = require 'push'
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
+
+    player_1_score = 0
+    player_2_score = 0
+
     push:setupScreen(V_WIDTH, V_HEIGHT, WIN_WIDTH, WIN_HEIGHT, {
         fullscreen = false,
         vsync = true,
@@ -30,12 +34,16 @@ function love.draw()
     push:apply('start')
     -- change bg color using RGBA colors
     love.graphics.clear(R, G, B, A)
+    
     -- draw rect for pong ball      
     love.graphics.rectangle('fill', V_WIDTH/2, V_HEIGHT/2, 5, 5)
 
     -- draw paddles on both sides
     love.graphics.rectangle('fill', 5, 20, 5, 20)
     love.graphics.rectangle('fill', V_WIDTH-10,V_HEIGHT-40, 5, 20)
+    
+    love.graphics.print(player_1_score, V_WIDTH/2 - 50, V_HEIGHT / 3)
+    love.graphics.print(player_2_score, V_WIDTH/2 + 50, V_HEIGHT / 3)
     love.graphics.printf(
         "Hello Pong", 
         0, 
