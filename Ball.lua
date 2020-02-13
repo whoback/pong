@@ -25,7 +25,7 @@ end
 function Ball:render()
     
     -- draw rect for pong ball      
-    love.graphics.rectangle('fill', self.x, self.y, 4, 4)
+    love.graphics.rectangle('fill', self.x, self.y, self.w, self.h)
 
 end
 
